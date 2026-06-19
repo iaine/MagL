@@ -1,40 +1,3 @@
-import webview
-import json
-import numpy as np
-import threading
-import time
-
-from ..synth import Synth
-
-SR = 44100
-
-# ----------------------------
-# Synth (Python side)
-# ----------------------------
-synth = Synth()
-
-# ----------------------------
-# API exposed to JS
-# ----------------------------
-class API:
-    def play_distribution(self, dist):
-        dist = json.loads(dist)
-        audio = synth.distribution(dist).astype(np.float32)
-        return audio.tolist()
-
-    def play_xent(self, p, q):
-        p = json.loads(p)
-        q = json.loads(q)
-        audio = synth.xent(p, q).astype(np.float32)
-        return audio.tolist()
-
-
-api = API()
-
-# ----------------------------
-# HTML + JS UI
-# ----------------------------
-html = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,14 +41,3 @@ html = """
     </script>
 </body>
 </html>
-"""
-
-# ----------------------------
-# Run App
-# ----------------------------
-def start():
-    webview.create_window("MagL+X", html="ui/index.html", js_api=api)
-    webview.start()
-
-if __name__ == "__main__":
-    start()
