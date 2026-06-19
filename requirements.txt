@@ -1,3 +1,12 @@
-numpy 
-sounddevice 
-scipy
+# MagL+X dependencies
+# Install with:  pip install -r requirements.txt
+
+# Core: the DSL interpreter and synth (magl.py)
+numpy
+sounddevice
+
+# PyTorch loss sonification hook (engine.py, example.py, notebook)
+torch
+
+# Web-based playback UI (magic_webview.py)
+pywebview

@@ -152,6 +152,16 @@ class CrossEntropyTracker:
 
 # 🔊 Cross-Entropy Sound Types
 
+> **What these describe.** The table below describes the *intended* mapping from
+> how much the loss distribution **changes** between steps to how the sound
+> behaves. Note a current caveat: `xent_sound` uses raw cross-entropy
+> `H(P, Q) = -Σ P·log Q`, which does **not** reach zero at convergence (it equals
+> the entropy of the distribution). So a converged model will sound *calmer* but
+> not fully silent or perfectly stable — residual modulation/noise proportional
+> to the distribution's entropy remains. For true "silence at convergence," drive
+> the sound with KL or Jensen–Shannon divergence instead. See the README's
+> *Known limitations*.
+
 ## 1. Low Change (Convergence)
 
 - Stable tone
