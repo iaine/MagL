@@ -208,14 +208,14 @@ Real-Time Synth (sounddevice)
 Speaker Output
 ```
 
-**2. The PyTorch loss hook** (`engine.py`, `live engine.py`): a training loop's
+**2. The PyTorch loss hook** (`engine.py`, `live_engine.py`): a training loop's
 per-sample loss tensors are turned directly into audio, bypassing the text
 parser. This is what lets you *hear a model learn*.
 
 ```
 PyTorch per-sample loss tensor
    ↓
-loss_to_audio_fn  /  CrossEntropyTracker   (live engine.py)
+loss_to_audio_fn  /  CrossEntropyTracker   (live_engine.py)
    ↓
 Audio callback function
    ↓
@@ -263,7 +263,7 @@ Because `H(P, Q)` mixes the entropy of `P` with the mismatch between `P` and
 |------|------|
 | `magl.py` | The text DSL: parser, synth, cross-entropy, and a blocking realtime engine. Run `python magl.py` for the built-in demo. |
 | `engine.py` | PyTorch → MagL **source** helpers (`loss_to_magl`, `xent_to_magl`, `loss_to_magnitudes`) plus a `MagLHook`. |
-| `live engine.py` | PyTorch → **audio** helpers (`loss_to_audio_fn`, `CrossEntropyTracker`) and a non-blocking `LiveEngine`. *Snippet:* relies on `Synth`, `SR`, `sd` from `magl.py`'s scope — paste alongside it rather than importing standalone. |
+| `live_engine.py` | PyTorch → **audio** helpers (`loss_to_audio_fn`, `CrossEntropyTracker`) and a non-blocking `LiveEngine`. *Snippet:* relies on `Synth`, `SR`, `sd` from `magl.py`'s scope — paste alongside it rather than importing standalone. |
 | `example.py` | Illustrative training-loop **snippet** showing where the audio hook goes. Pseudocode (`model = ...`), not runnable as-is. |
 | `magic_webview.py` | Optional browser UI (pywebview) with its own synth and two demo buttons. |
 | `maglx_notebook.ipynb` | **Recommended starting point.** Self-contained, runnable: trains a model and sonifies its loss. |
