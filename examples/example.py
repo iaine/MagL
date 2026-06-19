@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+from synth import Synth
+from live_engine import LiveEngine, CrossEntropyTracker
+
 # Your existing synth + engine
 synth = Synth()
 engine = LiveEngine()
@@ -12,6 +15,8 @@ tracker = CrossEntropyTracker()
 model = ...
 optimizer = ...
 criterion = nn.CrossEntropyLoss(reduction="none")
+
+num_epochs = 50
 
 for epoch in range(num_epochs):
     for x, y in dataloader:
