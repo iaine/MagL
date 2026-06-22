@@ -3,15 +3,7 @@ import sounddevice as sd
 import time
 import ast
 
-from synth import Synth
-
-synth = Synth()
-
-# ----------------------------
-# Global Config
-# ----------------------------
-SR = 44100
-BLOCK = 512
+from synth import Synth, SR, BLOCK
 
 # ----------------------------
 # Core State
@@ -22,23 +14,21 @@ distributions = {}
 # ----------------------------
 # Utility Functions
 # ----------------------------
+# Note: distribution-comparison measures (cross_entropy / kl_divergence /
+# js_divergence) and the audio engine now live in synth.py as the single source
+# of truth. Only the helpers used by the parser/renderer remain here.
 
 def normalize(arr):
     arr = np.array(arr, dtype=float)
     s = np.sum(arr)
     return arr / s if s > 0 else arr
 
-def cross_entropy(p, q):
-    p = normalize(p)
-    q = normalize(q)
-    eps = 1e-9
-    return -np.sum(p * np.log(q + eps))
-
 def magnitude_to_freq(m):
     # Log mapping preserves order
     base = 220.0
     return base * (2 ** (m / 5.0))
 
+synth = Synth()
 
 # ----------------------------
 # Parser (Very Simple)
@@ -64,22 +54,29 @@ def parse_line(line):
 
     try:
         if head == "magnitude":
-            # form:  magnitude <name> = <number>
-            if len(tokens) < 4 or tokens[2] != "=":
+            # form:  magnitude <name> = <number>   (spacing around '=' is flexible)
+            if "=" not in line:
                 raise ValueError("expected 'magnitude <name> = <number>'")
-            name = tokens[1]
-            val = float(tokens[3])
+            lhs, rhs = line.split("=", 1)
+            lhs_tokens = lhs.split()          # ['magnitude', '<name>']
+            if len(lhs_tokens) < 2:
+                raise ValueError("expected 'magnitude <name> = <number>'")
+            name = lhs_tokens[1]
+            val = float(rhs.strip())
             magnitudes[name] = val
 
         elif head == "distribution":
-            # form:  distribution <name> = [<numbers>]
+            # form:  distribution <name> = [<numbers>]   (spacing flexible)
             if "=" not in line:
                 raise ValueError("expected 'distribution <name> = [..]'")
-            name = tokens[1]
-            raw = line.split("=", 1)[1].strip()
+            lhs, rhs = line.split("=", 1)
+            lhs_tokens = lhs.split()          # ['distribution', '<name>']
+            if len(lhs_tokens) < 2:
+                raise ValueError("expected 'distribution <name> = [..]'")
+            name = lhs_tokens[1]
             # literal_eval safely parses lists/tuples of numbers only --
             # no arbitrary code execution, unlike eval().
-            values = ast.literal_eval(raw)
+            values = ast.literal_eval(rhs.strip())
             if not isinstance(values, (list, tuple)) or not values:
                 raise ValueError("distribution must be a non-empty list")
             if not all(isinstance(v, (int, float)) for v in values):
