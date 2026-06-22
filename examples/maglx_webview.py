@@ -84,7 +84,7 @@ html = """
 # Run App
 # ----------------------------
 def start():
-    webview.create_window("MagL+X", html="ui/index.html", js_api=api)
+    webview.create_window("MagL+X", url="ui/index.html", js_api=api)
     webview.start()
 
 if __name__ == "__main__":
