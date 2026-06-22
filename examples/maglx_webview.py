@@ -19,13 +19,13 @@ synth = Synth()
 class API:
     def play_distribution(self, dist):
         dist = json.loads(dist)
-        audio = synth.distribution(dist).astype(np.float32)
+        audio = synth.distribution_sound(dist).astype(np.float32)
         return audio.tolist()
 
     def play_xent(self, p, q):
         p = json.loads(p)
         q = json.loads(q)
-        audio = synth.xent(p, q).astype(np.float32)
+        audio = synth.xent_sound(p, q).astype(np.float32)
         return audio.tolist()
 
 
